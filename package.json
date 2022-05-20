@@ -1,0 +1,29 @@
+{
+  "name": "discord_holiday_bot",
+  "version": "1.0.0",
+  "description": "Discord Holiday Bot",
+  "main": "app.js",
+  "scripts": {
+    "test": "test",
+    "start": "node .",
+    "dev": "set NODE_ENV=development&&npm start",
+    "dcom": "node deploy-commands.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/DROFEL/DiscordHolidayBot.git"
+  },
+  "author": "DROFEL",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/DROFEL/DiscordHolidayBot/issues"
+  },
+  "homepage": "https://github.com/DROFEL/DiscordHolidayBot#readme",
+  "dependencies": {
+    "@discordjs/builders": "^0.13.0",
+    "@discordjs/rest": "^0.4.1",
+    "discord-api-types": "^0.33.0",
+    "discord.js": "^13.7.0",
+    "dotenv": "^16.0.1"
+  }
+}
