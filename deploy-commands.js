@@ -1,4 +1,5 @@
-const { SlashCommandBuilder } = require('@discordjs/builders');
+const path = require('path');
+const fs = require('fs');
 const { REST } = require('@discordjs/rest');
 const { Routes } = require('discord-api-types/v9');
 const { SnowflakeUtil } = require('discord.js');
@@ -6,14 +7,16 @@ require('dotenv').config();
 
 const env = process.env;
 
-const commands = [
-    new SlashCommandBuilder().setName('ping').setDescription('replies pong!'),
-    new SlashCommandBuilder().setName('info').setDescription('Bot information'),
-    new SlashCommandBuilder().setName('arianne').setDescription("Hmmm"),
-    new SlashCommandBuilder().setName('nazarii').setDescription("Gay"),
-    new SlashCommandBuilder().setName('user').setDescription('Replies user information')
-]
-    .map(command => command.toJSON());
+const commands = [];
+const commandsPath = path.join(__dirname, 'commands');
+const commandFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+
+for (const file of commandFiles) {
+	const filePath = path.join(commandsPath, file);
+	const command = require(filePath);
+	commands.push(command.data.toJSON());
+}
+
 
 const rest = new REST({ version: '9'}).setToken(env.DISCORD_TOKEN);
 

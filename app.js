@@ -1,37 +1,42 @@
 require('dotenv').config();
-const {Client, Intents} = require('discord.js');
+const { Client, Intents, Collection } = require('discord.js');
+const fs = require('node:fs');
+const path = require('node:path');
 
 const env = process.env;
 
-const client = new Client({intents: [Intents.FLAGS.GUILDS]})
+const client = new Client({ intents: [Intents.FLAGS.GUILDS] })
+
+client.commands = new Collection();
+
+const commandsPath = path.join(__dirname, 'commands');
+const commandsFiles = fs.readdirSync(commandsPath).filter(file => file.endsWith('.js'));
+
+for (const file of commandsFiles) {
+    const filePath = path.join(commandsPath, file);
+    const command = require(filePath);
+
+    client.commands.set(command.data.name, command);
+};
 
 client.once('ready', () => {
     console.log('client ready!');
 });
 
 client.on('interactionCreate', async interaction => {
-    if(!interaction.isCommand())
-        return;
-    
-    const { commandName } = interaction;
+    if (!interaction.isCommand()) return;
 
-    switch(commandName) {
-        case 'ping':
-            await interaction.reply('Pong!');
-            break;
-        case 'info':
-            await interaction.reply('Server name: ${interaction.guild.name}');
-            break;
-        case 'user':
-            await interaction.reply('User Info!');
-            break;
-        case 'arianne':
-            await interaction.reply("Hi Arianne thats George's bot");
-            break;
-        case 'nazarii':
-            await interaction.reply("Nazar Gay");
-            break;
+    const command = client.commands.get(interaction.commandName);
+    if (!command) return;
+
+    try {
+        await command.execute(interaction);
     }
+    catch (error) {
+        console.error(error);
+        await interaction.reply({ content: 'There was an error executing command', ephemeral: true });
+    }
+
 })
 
 client.login(env.DISCORD_TOKEN);
